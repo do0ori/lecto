@@ -12,10 +12,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const url = tab.url;
     const urlPattern = /^https:\/\/school\.programmers\.co\.kr\/app\/courses\/\d+\/curriculum\/lessons\/\d+/;
     if (urlPattern.test(url)) {
-        note.innerText = "✅Available in this page✅";
+        note.innerText = "✅Available Page✅";
         automationButton.disabled = false;
     } else {
-        note.innerText = "⛔Not available in this page⛔";
+        note.innerText = "⛔Unavailable Page⛔";
         automationButton.disabled = true;
     }
 
