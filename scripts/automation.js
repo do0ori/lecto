@@ -35,11 +35,9 @@
         const videoContinueBtn = document.querySelector(VIDEO_CONTINUE_BTN_SELECTOR);
         if (videoContinueBtn) {
             videoContinueBtn.click();
-            console.log("이어서 보기");
         } else {
             const videoElement = document.querySelector(VIDEO_SELECTOR);
             videoElement.play();
-            console.log("플레이");
         }
     };
 
@@ -63,7 +61,6 @@
     /**
      * Execution
      */
-    console.log("automation.js 실행")
     if (isTarget()) {
         playVideo();
         const videoLength = getVideoLength();
@@ -74,9 +71,9 @@
     }
 
     if (isLastLecture()) {
-        chrome.runtime.sendMessage({ action: "endAutomation" });
+        chrome.runtime.sendMessage({ action: "endAutomation", lectureCount: getLectureCount() });
     } else {
         clickNextLectureBtn();
-        chrome.runtime.sendMessage({ action: "executeAutomation", lectureCount: getLectureCount() });
+        chrome.runtime.sendMessage({ action: "executeAutomation" });
     }
 })();
