@@ -8,7 +8,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         });
     } else if (message.action === "executeAutomation") {
         console.log("executeAutomation");
-
+        // Wait 10 seconds for page loading
         await new Promise(resolve => setTimeout(resolve, 10000));
         // Run a lecture on the current page
         chrome.scripting.executeScript({
@@ -16,7 +16,29 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
             files: ["scripts/automation.js"]
         });
     } else if (message.action === "endAutomation") {
-        console.log("endAutomation", message.lectureCount);
-        // 알림 보내기
+        console.log("endAutomation");
+        // Send notification that Lecto has completed all lectures
+        chrome.notifications.create({
+            type: "basic",
+            title: "🤖Lecto has completed all lectures for you!",
+            message: `${message.lectureCount} Lectures Completed✅`,
+            iconUrl: "images/programmers_extension.png"
+        }, (notificationId) => {
+            // Play notification sound
+            chrome.scripting.executeScript({
+                target: { tabId: sender.tab.id },
+                func: () => {
+                    const noti_sound = new Audio(chrome.runtime.getURL("audios/Slack-Ding.mp3"));
+                    noti_sound.play();
+                }
+            });
+            // Move to lecture tab when notification is clicked
+            chrome.notifications.onClicked.addListener((clickedNotificationId) => {
+                if (clickedNotificationId === notificationId) {
+                    chrome.tabs.update(sender.tab.id, { active: true });
+                    chrome.notifications.clear(clickedNotificationId);
+                }
+            });
+        });
     }
 });

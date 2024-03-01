@@ -6,7 +6,8 @@
   "permissions": [
     "activeTab",
     "tabs",
-    "scripting"
+    "scripting",
+    "notifications"
   ],
   "action": {
     "default_popup": "popup/popup.html",
@@ -14,5 +15,15 @@
   },
   "background": {
     "service_worker": "background.js"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "audios/Slack-Ding.mp3"
+      ],
+      "matches": [
+        "https://school.programmers.co.kr/*"
+      ]
+    }
+  ]
 }
