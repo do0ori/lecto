@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet"> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <style>
     body {
       width: 200px;
@@ -52,8 +52,23 @@
       border: 0;
       border-top: 1px solid hsl(0, 0%, 90%);
       border-bottom: 1px solid hsl(0, 0%, 100%);
-      margin: 16px 0;
+      margin: 16px 0 6px 0;
       padding: 0;
+    }
+
+    .socials {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    a:visited {
+      color: inherit;
     }
   </style>
 </head>
@@ -63,9 +78,13 @@
   <h3 id="note"></h3>
   <button id="automationButton">Start</button>
   <hr>
-  <div id="socials" class="sixteen wide column">
-    <a title="Lecto GitHub" href="https://github.com/do0ori/lecto" target="_blank">github icon</a>
-    <a title="Email" href="mailto:fuzzydo0ori@gmail.com" target="_blank">mail icon</a>
+  <div class="socials">
+    <a title="Lecto GitHub" href="https://github.com/do0ori/lecto" target="_blank">
+      <i class="fa fa-github" style="font-size:17px"></i>
+    </a>
+    <a title="Email" href="mailto:fuzzydo0ori@gmail.com" target="_blank">
+      <i class="fa fa-envelope" style="font-size:15px;color:red"></i>
+    </a>
   </div>
   <script src="popup.js"></script>
 </body>
