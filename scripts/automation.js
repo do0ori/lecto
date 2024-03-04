@@ -8,8 +8,10 @@
     const LECTURE_LIST_LAST_CHILD_SELECTOR = "#edu-solution-app-curriculum > div.XUluzQXfh5EBQEQogBBI.qxuY40RjTXcdAR3xxZD0 > aside > div > div > nav.ZZKOPPvxNnQxE5G5BJUJ > ul > li:last-child > a";
     const VIDEO_SELECTOR = "#vjs_video_3_html5_api";
     const VIDEO_CONTINUE_BTN_SELECTOR = "#edu-solution-app-curriculum > div.XUluzQXfh5EBQEQogBBI.qxuY40RjTXcdAR3xxZD0 > main > div.FO3gkZjDbb667BGIJhQf.mrsF_olxOOmXQsjZhwyP > div._2QIlVi2agx2d2VlfMBFg > button.z4Uv3DOSYWM5UfzblwW4.HSGtViGCETPyrEac259m.EqVvXq2OdS6BVf5UR2KQ.hBC7vWMzdxC5kl5Ms2y7.hBC7vWMzdxC5kl5Ms2y7";
-    const VIDEO_LENGTH = "#vjs_video_3 > div.vjs-control-bar > div.vjs-duration.vjs-time-control.vjs-control > span.vjs-duration-display";
+    const VIDEO_DURATION = "#vjs_video_3 > div.vjs-control-bar > div.vjs-duration.vjs-time-control.vjs-control > span.vjs-duration-display";
+    const CURRENT_TIME = "#vjs_video_3 > div.vjs-control-bar > div.vjs-current-time.vjs-time-control.vjs-control > span.vjs-current-time-display";
     const LECTURE_COMPLETE_SELECTOR = "#edu-solution-app-curriculum > div.XUluzQXfh5EBQEQogBBI.qxuY40RjTXcdAR3xxZD0 > footer > div > div > span";
+    const VIDEO_VOLUME = "#vjs_video_3 > div.vjs-control-bar > div.vjs-volume-panel.vjs-control.vjs-volume-panel-horizontal > button > span.vjs-control-text"
 
     const clickNextLectureBtn = () => {
         const nextBtn = document.querySelector(NEXT_LECTURE_BTN_SELECTOR);
@@ -39,11 +41,21 @@
             const videoElement = document.querySelector(VIDEO_SELECTOR);
             videoElement.play();
         }
+
+        const videoVolume = document.querySelector(VIDEO_VOLUME);
+        if (videoVolume.innerText == "음소거") {
+            videoVolume.click();
+        }
     };
 
     const getVideoLength = () => {
-        const videoElement = document.querySelector(VIDEO_LENGTH);
-        const time = videoElement.innerText.split(':').map(Number);
+        const videoDuration = convertToSeconds(document.querySelector(VIDEO_DURATION));
+        const currentTime = convertToSeconds(document.querySelector(CURRENT_TIME));
+        return videoDuration - currentTime;
+    };
+
+    const convertToSeconds = (timeString) => {
+        const time = timeString.innerText.split(':').map(Number);
         switch (time.length) {
             case 1:
                 return time[0];
@@ -63,6 +75,7 @@
      */
     if (isTarget()) {
         playVideo();
+        await sleep(0.5);
         const videoLength = getVideoLength();
         await sleep(videoLength);
         while (isTarget()) {
