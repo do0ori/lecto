@@ -1,5 +1,9 @@
+let isRunning = false;
+
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     if (message.action === "prepareAutomation") {
+        isRunning = true;
+
         console.log("prepareAutomation");
         // Navigate to the first lecture page
         chrome.scripting.executeScript({
@@ -39,6 +43,11 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
                     chrome.notifications.clear(clickedNotificationId);
                 }
             });
+
+            isRunning = false;
         });
+    } else if (message.action === "getState") {
+        // Send current state of isRunning
+        sendResponse(isRunning);
     }
 });
