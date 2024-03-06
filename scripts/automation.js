@@ -74,8 +74,13 @@
      * Execution
      */
     if (isTarget()) {
+        // Send message to service worker every 20 seconds to keep it alive during automation process
+        setInterval(() => {
+            chrome.runtime.sendMessage({ action: "keepAlive" });
+        }, 20000);
+
         playVideo();
-        await sleep(0.5);
+        await sleep(0.5);   // Wait for the current time of the video to be displayed
         const videoLength = getVideoLength();
         await sleep(videoLength);
         while (isTarget()) {
