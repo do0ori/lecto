@@ -26,14 +26,18 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
             type: "basic",
             title: "🤖Lecto has completed all lectures for you!",
             message: `${message.lectureCount} Lectures Completed✅`,
-            iconUrl: "images/programmers_extension.png"
+            iconUrl: "icons/programmers_extension.png"
         }, (notificationId) => {
-            // Play notification sound
-            chrome.scripting.executeScript({
-                target: { tabId: sender.tab.id },
-                func: () => {
-                    const noti_sound = new Audio(chrome.runtime.getURL("audios/Slack-Ding.mp3"));
-                    noti_sound.play();
+            chrome.storage.sync.get("notiSound", ({ notiSound }) => {
+                if (notiSound !== false) {
+                    // Play notification sound
+                    chrome.scripting.executeScript({
+                        target: { tabId: sender.tab.id },
+                        func: () => {
+                            const noti_sound = new Audio(chrome.runtime.getURL("audios/Slack-Ding.mp3"));
+                            noti_sound.play();
+                        }
+                    });
                 }
             });
             // Move to lecture tab when notification is clicked
