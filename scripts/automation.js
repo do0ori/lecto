@@ -41,11 +41,6 @@
             const videoElement = document.querySelector(VIDEO_SELECTOR);
             videoElement.play();
         }
-
-        const videoVolume = document.querySelector(VIDEO_VOLUME);
-        if (videoVolume.innerText == "음소거") {
-            videoVolume.click();
-        }
     };
 
     const getVideoLength = () => {
@@ -70,28 +65,68 @@
         return new Promise(resolve => setTimeout(resolve, sec * 1000));
     };
 
+    const updateVideoVolume = (lectureSound) => {
+        const videoVolume = document.querySelector(VIDEO_VOLUME);
+        if (lectureSound !== false) {
+            // Turn on volume
+            if (videoVolume.innerText !== "음소거") {
+                videoVolume.click();
+            }
+        } else {
+            // Turn off volume
+            if (videoVolume.innerText == "음소거") {
+                videoVolume.click();
+            }
+        }
+    };
+
+    const volumeChangeHandler = (changes, area) => {
+        console.log("storage 변화 감지됨");
+        if (area === "sync" && changes.hasOwnProperty("lectureSound")) {
+            console.log("lectureSound", changes.lectureSound.newValue);
+            updateVideoVolume(changes.lectureSound.newValue);
+        }
+    };
+
+    const moveToNextAction = () => {
+        if (isLastLecture()) {
+            chrome.runtime.sendMessage({ action: "endAutomation", lectureCount: getLectureCount() });
+        } else {
+            clickNextLectureBtn();
+            chrome.runtime.sendMessage({ action: "executeAutomation" });
+        }
+    };
+
     /**
      * Execution
      */
     if (isTarget()) {
         // Send message to service worker every 20 seconds to keep it alive during automation process
-        setInterval(() => {
+        const intervalID = setInterval(() => {
             chrome.runtime.sendMessage({ action: "keepAlive" });
         }, 20000);
 
         playVideo();
+        // Initialize volume based on lectureSound value
+        chrome.storage.sync.get("lectureSound", ({ lectureSound }) => updateVideoVolume(lectureSound));
+        // Update volume when lectureSound value changes
+        chrome.storage.onChanged.addListener(volumeChangeHandler);
+
         await sleep(0.5);   // Wait for the current time of the video to be displayed
         const videoLength = getVideoLength();
-        await sleep(videoLength);
-        while (isTarget()) {
-            await sleep(30);
-        }
+        setTimeout(async () => {
+            while (isTarget()) {
+                await sleep(30);
+            }
+
+            // Clean up
+            clearInterval(intervalID);
+            chrome.storage.onChanged.removeListener(volumeChangeHandler);
+
+            moveToNextAction();
+        }, videoLength * 1000);
+    } else {
+        moveToNextAction();
     }
 
-    if (isLastLecture()) {
-        chrome.runtime.sendMessage({ action: "endAutomation", lectureCount: getLectureCount() });
-    } else {
-        clickNextLectureBtn();
-        chrome.runtime.sendMessage({ action: "executeAutomation" });
-    }
 })();
