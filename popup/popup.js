@@ -3,6 +3,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     const loader = document.getElementsByClassName("loader")[0];
     const note = document.getElementById("note");
     const automationButton = document.getElementById("automationButton");
+    const lectureSwitch = document.getElementById("lecture-sound-switch");
+    const notiSwitch = document.getElementById("noti-sound-switch");
+
+    chrome.storage.sync.get(["lectureSound", "notiSound"], ({ lectureSound, notiSound }) => {
+        console.log(lectureSound, notiSound);
+        lectureSwitch.checked = lectureSound ?? false;
+        notiSwitch.checked = notiSound ?? true;
+    });
 
     const setButtonRunningState = () => {
         buttonText.style.display = "none";
@@ -39,4 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         automationButton.disabled = true;
         chrome.runtime.sendMessage({ action: "prepareAutomation", tabId: tab.id });
     });
+
+    lectureSwitch.addEventListener("change", () => chrome.storage.sync.set({ lectureSound: lectureSwitch.checked }));
+    notiSwitch.addEventListener("change", () => chrome.storage.sync.set({ notiSound: notiSwitch.checked }));
 });
