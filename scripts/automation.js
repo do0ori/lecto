@@ -12,6 +12,8 @@
     const CURRENT_TIME = "#vjs_video_3 > div.vjs-control-bar > div.vjs-current-time.vjs-time-control.vjs-control > span.vjs-current-time-display";
     const LECTURE_COMPLETE_SELECTOR = "#edu-solution-app-curriculum > div.XUluzQXfh5EBQEQogBBI.qxuY40RjTXcdAR3xxZD0 > footer > div > div > span";
     const VIDEO_VOLUME = "#vjs_video_3 > div.vjs-control-bar > div.vjs-volume-panel.vjs-control.vjs-volume-panel-horizontal > button > span.vjs-control-text"
+    const VIDEO_SPEED_MENU = "#vjs_video_3 > div.vjs-control-bar > div.vjs-playback-rate.vjs-menu-button.vjs-menu-button-popup.vjs-control.vjs-button > button";
+    const VIDEO_SPEED_1x = "#vjs_video_3 > div.vjs-control-bar > div.vjs-playback-rate.vjs-menu-button.vjs-menu-button-popup.vjs-control.vjs-button > div.vjs-menu.vjs-lock-showing > ul > li:nth-child(4)";
 
     const clickNextLectureBtn = () => {
         const nextBtn = document.querySelector(NEXT_LECTURE_BTN_SELECTOR);
@@ -41,6 +43,14 @@
             const videoElement = document.querySelector(VIDEO_SELECTOR);
             videoElement.play();
         }
+    };
+
+    const setVideoSpeed1x = async () => {
+        const videoSpeedMenu = document.querySelector(VIDEO_SPEED_MENU);
+        videoSpeedMenu.click();
+        // await sleep(0.5);   // Wait for the menu pops up
+        const videoSpeed1x = document.querySelector(VIDEO_SPEED_1x);
+        videoSpeed1x.click();
     };
 
     const getVideoLength = () => {
@@ -81,9 +91,7 @@
     };
 
     const volumeChangeHandler = (changes, area) => {
-        console.log("storage 변화 감지됨");
         if (area === "sync" && changes.hasOwnProperty("lectureSound")) {
-            console.log("lectureSound", changes.lectureSound.newValue);
             updateVideoVolume(changes.lectureSound.newValue);
         }
     };
@@ -107,6 +115,8 @@
         }, 20000);
 
         playVideo();
+        setVideoSpeed1x();
+
         // Initialize volume based on lectureSound value
         chrome.storage.sync.get("lectureSound", ({ lectureSound }) => updateVideoVolume(lectureSound));
         // Update volume when lectureSound value changes
